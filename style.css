@@ -1,0 +1,19 @@
+input {
+    width: 100%;
+    height: 40px;
+    cursor: pointer;
+    background: #b2b2b2;
+}
+
+input:focus { 
+    background: none;
+    outline: none;
+}
+
+.range-items li{
+    width:10px;
+    text-align: center;
+    color: #3a3a3a;
+    font-size: 14px;
+    cursor: pointer;
+}

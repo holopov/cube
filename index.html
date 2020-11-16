@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кубик</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<script>
+    var count_cubes = 1;
+    var count_push = 1;
+    var cubes = new Array();
+    var numbers = new Array();
+    var total_score = 0;
+</script>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center">
+                    <img src="dice.png" style="width:4%; height:auto; -webkit-transform: scaleX(-1);  transform: scaleX(-1);">
+                    Кубик
+                    <img src="dice.png" style="width:4%; height:auto;">
+                </h1>
+                <div class="range" style="margin-top: 60px;">
+                    <label style="position: relative; top:0px;">Количество кубиков:</label>
+                    <input type="range" min="1" max="6" steps="1" value="1" id="count-cubes" onchange="count_cubes = this.value;">
+                </div>
+                <div>
+                    <ul class="list-unstyled d-flex justify-content-between range-items" style="position:relative; top:-20px; z-index:-1;">
+                        <li class="active selected">1</li>
+                        <li>2</li>
+                        <li>3</li>
+                        <li>4</li>
+                        <li>5</li>
+                        <li>6</li>
+                    </ul>
+                </div>
+                <div class="range" style="margin-top: 10px;">
+                    <label style="position: relative; top:0px;">Количество бросков:</label>
+                    <input type="range" min="1" max="10" steps="1" value="1" id="count-push" onchange="count_push = this.value;">
+                </div>
+                <div>
+                    <ul class="list-unstyled d-flex justify-content-between range-items" style="position:relative; top:-20px; z-index:-1;">
+                        <li class="active selected">1</li>
+                        <li>2</li>
+                        <li>3</li>
+                        <li>4</li>
+                        <li>5</li>
+                        <li>6</li>
+                        <li>7</li>
+                        <li>8</li>
+                        <li>9</li>
+                        <li>10</li>
+                    </ul>
+                </div>
+                <div class="d-flex justify-content-between" style="margin-top: 60px;">
+                    <button class="btn btn-info" onclick="push_cube();">Поехали!</button>
+                    <button class="btn btn-warning" onclick="clean(document.querySelector('table.table'));">Очистить</button>
+                </div>
+                <br>
+                <div class="log">
+                    <table class="table" id='result-push'></table>
+                </div>
+                <hr>
+                <div id="total-score"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>       
+    function clean(table) {
+        total_score = 0;
+        cubes = new Array();
+        numbers = new Array();
+        document.getElementById("total-score").innerHTML = '';
+        while (table.hasChildNodes()) {table.removeChild(table.firstChild);}
+        //document.querySelectorAll("table.table tr").remove();
+    }
+    
+    function push_cube() {
+        let table = document.querySelector("table.table");
+        clean(table);
+        generate_table_head(table);
+        
+        //let count_push = document.getElementById("count-push").value;
+        for (cube = 0; cube < count_cubes; cube++) {
+            numbers = new Array();
+            for (i = 0; i < count_push; i++) {
+                numbers.push(random_integer(1,6));
+                total_score += numbers[numbers.length-1];
+            }
+            cubes.push(numbers);
+        }
+        console.log(cubes);
+        generate_table_body(table, cubes);
+        let push_element = document.getElementById("log");
+        //push_element.innerHTML = numbers.join(', ');
+        document.getElementById("total-score").innerHTML = '<h3>Всего очков: ' + total_score + '</h3>';
+    }
+    
+    function generate_table_head(table) {
+        let thead = table.createTHead();
+        let row = thead.insertRow();
+        let th = document.createElement("th");
+        let text = document.createTextNode('Бросок');
+        th.appendChild(text);
+        row.appendChild(th);
+        for (i = 0; i < count_push; i++) {
+            let th = document.createElement("th");
+            let text = document.createTextNode(i+1);
+            th.appendChild(text);
+            row.appendChild(th);        
+        }
+        th = document.createElement("th");
+        text = document.createTextNode('Итого');
+        th.appendChild(text);
+        row.appendChild(th);
+    }
+    
+    function generate_table_body(table, cubes) {
+        for (cube = 0; cube < cubes.length; cube++) {
+            let row = table.insertRow();
+            let cell = row.insertCell();
+            let text = document.createTextNode('Кубик ' + (cube+1));
+            cell.appendChild(text);
+            let arr = cubes[cube];
+            arr.forEach(function(item, i, arr) {
+                let cell = row.insertCell();
+                let text = document.createTextNode(item);
+                cell.appendChild(text);
+            });
+            cell = row.insertCell();
+            let b = document.createElement("b");
+            text = document.createTextNode(arr.reduce((a, b) => a + b, 0));
+            b.appendChild(text);
+            cell.appendChild(b);
+        }
+    }
+    
+    function random_integer(min, max) {
+        // получить случайное число от (min-0.5) до (max+0.5)
+        let rand = min - 0.5 + Math.random() * (max - min + 1);
+        return Math.round(rand);
+    }
+</script>
+</html>
