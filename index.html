@@ -57,7 +57,7 @@
                 </div>
                 <div class="d-flex justify-content-between" style="margin-top: 60px;">
                     <button class="btn btn-info" onclick="push_cube();">Поехали!</button>
-                    <button class="btn btn-warning" onclick="clean(document.querySelector('table.table'));">Очистить</button>
+                    <button class="btn btn-warning" onclick="clean_table_score(document.querySelector('table.table'));">Очистить</button>
                 </div>
                 <br>
                 <div class="log">
@@ -70,7 +70,7 @@
     </div>
 </body>
 <script>       
-    function clean(table) {
+    function clean_table_score(table) {
         total_score = 0;
         cubes = new Array();
         numbers = new Array();
@@ -81,10 +81,8 @@
     
     function push_cube() {
         let table = document.querySelector("table.table");
-        clean(table);
+        clean_table_score(table);
         generate_table_head(table);
-        
-        //let count_push = document.getElementById("count-push").value;
         for (cube = 0; cube < count_cubes; cube++) {
             numbers = new Array();
             for (i = 0; i < count_push; i++) {
@@ -93,35 +91,35 @@
             }
             cubes.push(numbers);
         }
-        console.log(cubes);
         generate_table_body(table, cubes);
         let push_element = document.getElementById("log");
-        //push_element.innerHTML = numbers.join(', ');
         document.getElementById("total-score").innerHTML = '<h3>Всего очков: ' + total_score + '</h3>';
+    }
+    
+    function generate_node(node_name, text) {
+        let node = document.createElement(node_name);
+        let text_node = document.createTextNode(text);
+        node.appendChild(text_node);
+        return node;
     }
     
     function generate_table_head(table) {
         let thead = table.createTHead();
         let row = thead.insertRow();
-        let th = document.createElement("th");
-        let text = document.createTextNode('Бросок');
-        th.appendChild(text);
-        row.appendChild(th);
+        row.appendChild(generate_node("th", "Бросок"));
         for (i = 0; i < count_push; i++) {
-            let th = document.createElement("th");
-            let text = document.createTextNode(i+1);
-            th.appendChild(text);
-            row.appendChild(th);        
+            row.appendChild(generate_node("th", i+1));
         }
-        th = document.createElement("th");
-        text = document.createTextNode('Итого');
-        th.appendChild(text);
-        row.appendChild(th);
+        row.appendChild(generate_node("th", "Итого"));
+        for (i = 1; i <= 6; i++) {
+            row.appendChild(generate_node("th", i));
+        }
     }
     
     function generate_table_body(table, cubes) {
+        let tbody = table.createTBody();
         for (cube = 0; cube < cubes.length; cube++) {
-            let row = table.insertRow();
+            let row = tbody.insertRow();
             let cell = row.insertCell();
             let text = document.createTextNode('Кубик ' + (cube+1));
             cell.appendChild(text);
@@ -132,10 +130,10 @@
                 cell.appendChild(text);
             });
             cell = row.insertCell();
-            let b = document.createElement("b");
-            text = document.createTextNode(arr.reduce((a, b) => a + b, 0));
-            b.appendChild(text);
-            cell.appendChild(b);
+            cell.appendChild(generate_node("b", arr.reduce((a, b) => a + b, 0)));
+            for (i = 1; i <= 6; i++) {
+                row.insertCell().appendChild(generate_node("span", arr.filter(function(number){return number == i;}).length));
+            }
         }
     }
     
