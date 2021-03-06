@@ -3,6 +3,12 @@ var count_push = 1;
 var cubes = new Array();
 var numbers = new Array();
 var total_score = 0;
+var colors_block = new Array('zero', 'one', 'two', 'three', 'four', 'five-and-more');
+
+function get_background_color(number) {
+    if (number >= 0 && number < 6) {return colors_block[number]}
+    return colors_block[5];
+}
 
 function clean_table_score(table) {
     total_score = 0;
@@ -10,7 +16,6 @@ function clean_table_score(table) {
     numbers = new Array();
     document.getElementById("total-score").innerHTML = '';
     while (table.hasChildNodes()) {table.removeChild(table.firstChild);}
-    //document.querySelectorAll("table.table tr").remove();
 }
 
 function push_cube() {
@@ -30,10 +35,13 @@ function push_cube() {
     document.getElementById("total-score").innerHTML = '<h3>Всего очков: ' + total_score + '</h3>';
 }
 
-function generate_node(node_name, text) {
+function generate_node(node_name, text, _class=null) {
     let node = document.createElement(node_name);
-    let text_node = document.createTextNode(text);
-    node.appendChild(text_node);
+    if (text !== '') {
+        let text_node = document.createTextNode(text);
+        node.appendChild(text_node);
+    }
+    if (_class !== null) { node.className = _class; }
     return node;
 }
 
@@ -46,7 +54,9 @@ function generate_table_head(table) {
     }
     row.appendChild(generate_node("th", "Итого"));
     for (i = 1; i <= 6; i++) {
-        row.appendChild(generate_node("th", i));
+        let th = generate_node("th", "");
+        th.appendChild(generate_node("span", i, "block"));
+        row.appendChild(th);
     }
 }
 
@@ -66,7 +76,8 @@ function generate_table_body(table, cubes) {
         cell = row.insertCell();
         cell.appendChild(generate_node("b", arr.reduce((a, b) => a + b, 0)));
         for (i = 1; i <= 6; i++) {
-            row.insertCell().appendChild(generate_node("span", arr.filter(function(number){return number == i;}).length));
+            let count_number = arr.filter(function(number){return number == i;}).length;
+            row.insertCell().appendChild(generate_node("span", count_number, "block no-text " + get_background_color(count_number)));
         }
     }
 }
