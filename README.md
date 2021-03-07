@@ -18,4 +18,4 @@ git clone https://github.com/holopov/cube.git
 
 ## Сторонние модули
 
-Для работы используются css стили bootstrap.
+- bootstrap v4.5.3
